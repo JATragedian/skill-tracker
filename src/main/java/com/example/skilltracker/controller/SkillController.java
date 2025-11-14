@@ -2,7 +2,6 @@ package com.example.skilltracker.controller;
 
 import com.example.skilltracker.dto.skill.request.CreateSkillRequest;
 import com.example.skilltracker.dto.skill.response.SkillResponse;
-import com.example.skilltracker.domain.Skill;
 import com.example.skilltracker.service.SkillService;
 import jakarta.validation.Valid;
 import org.springframework.validation.annotation.Validated;
@@ -24,25 +23,25 @@ public class SkillController {
     @GetMapping
     public List<SkillResponse> getAllSkills() {
         return skillService.findAll().stream()
-                .map(skill -> new SkillResponse(skill.id(), skill.name(), skill.level()))
+                .map(skill -> new SkillResponse(skill.getId(), skill.getName(), skill.getLevel()))
                 .toList();
     }
 
     @GetMapping("/{id}")
     public SkillResponse getSkill(@PathVariable Long id) {
-        Skill skill = skillService.findById(id);
-        return new SkillResponse(skill.id(), skill.name(), skill.level());
+        var skill = skillService.findById(id);
+        return new SkillResponse(skill.getId(), skill.getName(), skill.getLevel());
     }
 
     @PostMapping
     public SkillResponse addSkill(@Valid @RequestBody CreateSkillRequest request) {
         var skill = skillService.create(request.name(), request.level());
-        return new SkillResponse(skill.id(), skill.name(), skill.level());
+        return new SkillResponse(skill.getId(), skill.getName(), skill.getLevel());
     }
 
     @DeleteMapping("/{id}")
     public String deleteSkill(@PathVariable Long id) {
-        boolean removed = skillService.delete(id);
-        return removed ? "Deleted skill " + id : "Skill not found";
+        skillService.delete(id);
+        return "Deleted skill " + id;
     }
 }

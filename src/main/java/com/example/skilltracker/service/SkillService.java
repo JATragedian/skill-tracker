@@ -1,42 +1,38 @@
 package com.example.skilltracker.service;
 
 import com.example.skilltracker.dto.skill.exception.SkillNotFoundException;
-import com.example.skilltracker.domain.Skill;
+import com.example.skilltracker.entity.SkillEntity;
+import com.example.skilltracker.repository.SkillRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 public class SkillService {
 
-    private final Map<Long, Skill> skills = new HashMap<>();
-    private final AtomicLong counter = new AtomicLong(1);
+    private final SkillRepository repository;
 
-    public List<Skill> findAll() {
-        return new ArrayList<>(skills.values());
+    public SkillService(SkillRepository repository) {
+        this.repository = repository;
     }
 
-    public Skill findById(Long id) {
-        Skill skill = skills.get(id);
-        if (skill == null) {
+    public List<SkillEntity> findAll() {
+        return repository.findAll();
+    }
+
+    public SkillEntity findById(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new SkillNotFoundException(id));
+    }
+
+    public SkillEntity create(String name, int level) {
+        return repository.save(new SkillEntity(name, level));
+    }
+
+    public void delete(Long id) {
+        if (!repository.existsById(id)) {
             throw new SkillNotFoundException(id);
         }
-
-        return skill;
-    }
-
-    public Skill create(String name, int level) {
-        Long id = counter.getAndIncrement();
-        Skill skill = new Skill(id, name, level);
-        skills.put(id, skill);
-        return skill;
-    }
-
-    public boolean delete(Long id) {
-        return skills.remove(id) != null;
+        repository.deleteById(id);
     }
 }
