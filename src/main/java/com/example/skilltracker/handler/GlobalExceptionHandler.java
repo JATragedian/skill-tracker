@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Map;
 
 @ControllerAdvice
@@ -18,7 +19,7 @@ public class GlobalExceptionHandler {
                 .body(Map.of(
                         "error", ex.getMessage(),
                         "id", ex.getId(),
-                        "timestamp", LocalDateTime.now()
+                        "timestamp", LocalDateTime.now(ZoneId.of("America/Los_Angeles"))
                 ));
     }
 }

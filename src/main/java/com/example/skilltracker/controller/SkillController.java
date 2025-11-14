@@ -2,7 +2,7 @@ package com.example.skilltracker.controller;
 
 import com.example.skilltracker.dto.skill.request.CreateSkillRequest;
 import com.example.skilltracker.dto.skill.response.SkillResponse;
-import com.example.skilltracker.model.Skill;
+import com.example.skilltracker.domain.Skill;
 import com.example.skilltracker.service.SkillService;
 import jakarta.validation.Valid;
 import org.springframework.validation.annotation.Validated;
@@ -22,8 +22,10 @@ public class SkillController {
     }
 
     @GetMapping
-    public List<Skill> getAllSkills() {
-        return skillService.findAll();
+    public List<SkillResponse> getAllSkills() {
+        return skillService.findAll().stream()
+                .map(skill -> new SkillResponse(skill.id(), skill.name(), skill.level()))
+                .toList();
     }
 
     @GetMapping("/{id}")

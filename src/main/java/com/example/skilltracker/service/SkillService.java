@@ -1,7 +1,7 @@
 package com.example.skilltracker.service;
 
 import com.example.skilltracker.dto.skill.exception.SkillNotFoundException;
-import com.example.skilltracker.model.Skill;
+import com.example.skilltracker.domain.Skill;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
