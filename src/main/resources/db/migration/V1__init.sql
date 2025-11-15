@@ -1,0 +1,5 @@
+CREATE TABLE skill (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    level INTEGER NOT NULL
+);
