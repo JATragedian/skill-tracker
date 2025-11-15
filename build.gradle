@@ -27,6 +27,7 @@ dependencies {
     errorprone 'com.google.errorprone:error_prone_core:2.29.2'
 
     runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'org.postgresql:postgresql'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
