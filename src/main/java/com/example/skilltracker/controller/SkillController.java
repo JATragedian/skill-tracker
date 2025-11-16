@@ -14,34 +14,34 @@ import java.util.List;
 @RequestMapping("/api/skills")
 public class SkillController {
 
-    private final SkillService skillService;
+    private final SkillService service;
 
-    public SkillController(SkillService skillService) {
-        this.skillService = skillService;
+    public SkillController(SkillService service) {
+        this.service = service;
     }
 
     @GetMapping
-    public List<SkillResponse> getAllSkills() {
-        return skillService.findAll().stream()
+    public List<SkillResponse> findAll() {
+        return service.findAll().stream()
                 .map(skill -> new SkillResponse(skill.getId(), skill.getName(), skill.getLevel()))
                 .toList();
     }
 
     @GetMapping("/{id}")
-    public SkillResponse getSkill(@PathVariable Long id) {
-        var skill = skillService.findById(id);
+    public SkillResponse find(@PathVariable Long id) {
+        var skill = service.findById(id);
         return new SkillResponse(skill.getId(), skill.getName(), skill.getLevel());
     }
 
     @PostMapping
-    public SkillResponse addSkill(@Valid @RequestBody CreateSkillRequest request) {
-        var skill = skillService.create(request.name(), request.level());
+    public SkillResponse create(@Valid @RequestBody CreateSkillRequest request) {
+        var skill = service.create(request.name(), request.level());
         return new SkillResponse(skill.getId(), skill.getName(), skill.getLevel());
     }
 
     @DeleteMapping("/{id}")
-    public String deleteSkill(@PathVariable Long id) {
-        skillService.delete(id);
+    public String delete(@PathVariable Long id) {
+        service.delete(id);
         return "Deleted skill " + id;
     }
 }

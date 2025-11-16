@@ -1,6 +1,6 @@
 package com.example.skilltracker.service;
 
-import com.example.skilltracker.dto.skill.exception.SkillNotFoundException;
+import com.example.skilltracker.entity.exception.EntityNotFoundException;
 import com.example.skilltracker.entity.SkillEntity;
 import com.example.skilltracker.repository.SkillRepository;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ public class SkillService {
 
     public SkillEntity findById(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new SkillNotFoundException(id));
+                .orElseThrow(() -> new EntityNotFoundException(SkillEntity.class, id));
     }
 
     public SkillEntity create(String name, int level) {
@@ -31,7 +31,7 @@ public class SkillService {
 
     public void delete(Long id) {
         if (!repository.existsById(id)) {
-            throw new SkillNotFoundException(id);
+            throw new EntityNotFoundException(SkillEntity.class, id);
         }
         repository.deleteById(id);
     }
