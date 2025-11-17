@@ -7,6 +7,7 @@ import com.example.skilltracker.dto.skillassignment.response.SkillAssignmentResp
 import com.example.skilltracker.entity.SkillAssignmentEntity;
 import com.example.skilltracker.service.SkillAssignmentService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +29,7 @@ public class SkillAssignmentController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('USER')")
     public SkillAssignmentResponse assignSkill(@RequestBody CreateSkillAssignmentRequest request) {
         SkillAssignmentEntity assignment =
                 service.assignSkillToUser(request.userId(), request.skillId(), request.proficiency());
@@ -41,6 +43,7 @@ public class SkillAssignmentController {
     }
 
     @PostMapping("/multiple")
+    @PreAuthorize("hasRole('USER')")
     public MultipleSkillsAssignmentResponse assignMultiple(@RequestBody AssignMultipleSkillsRequest request) {
         List<SkillAssignmentResponse> responseList = service.assignMultiple(
                         request.userId(),

@@ -2,9 +2,10 @@ package com.example.skilltracker.dto.user.request;
 
 import jakarta.validation.constraints.NotBlank;
 
-public record CreateUserRequest(
-        @NotBlank(message = "Username cannot be empty")
-        String username,
+public record RegisterUserRequest(
+        @NotBlank(message = "Name cannot be empty")
+        String name,
         @NotBlank(message = "Email cannot be empty")
-        String email
+        String email,
+        String password
 ) {}

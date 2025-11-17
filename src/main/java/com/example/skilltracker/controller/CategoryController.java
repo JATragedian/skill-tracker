@@ -5,6 +5,7 @@ import com.example.skilltracker.dto.category.response.CategoryResponse;
 import com.example.skilltracker.service.CategoryService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,12 +37,14 @@ public class CategoryController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public CategoryResponse create(@Valid @RequestBody CreateCategoryRequest request) {
         var category = service.create(request.name());
         return new CategoryResponse(category.getId(), category.getName());
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public String delete(@PathVariable Long id) {
         service.delete(id);
         return "Deleted category " + id;

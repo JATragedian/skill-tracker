@@ -1,5 +1,6 @@
 package com.example.skilltracker.entity;
 
+import com.example.skilltracker.entity.user.UserEntity;
 import jakarta.persistence.*;
 
 @Entity

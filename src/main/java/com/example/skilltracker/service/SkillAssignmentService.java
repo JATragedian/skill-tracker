@@ -2,7 +2,7 @@ package com.example.skilltracker.service;
 
 import com.example.skilltracker.entity.SkillAssignmentEntity;
 import com.example.skilltracker.entity.SkillEntity;
-import com.example.skilltracker.entity.UserEntity;
+import com.example.skilltracker.entity.user.UserEntity;
 import com.example.skilltracker.entity.exception.DuplicateEntityException;
 import com.example.skilltracker.entity.exception.EntityNotFoundException;
 import com.example.skilltracker.repository.SkillAssignmentRepository;
