@@ -10,6 +10,6 @@ public record CreateSkillAssignmentRequest(
         @NotNull
         Long skillId,
         @Min(value = 1, message = "Proficiency must be at least 1")
-        @Max(value = 10, message = "Proficiency cannot exceed 10")
+        @Max(value = 100, message = "Proficiency cannot exceed 100")
         int proficiency
 ) {}

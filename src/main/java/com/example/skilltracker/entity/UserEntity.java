@@ -1,38 +1,61 @@
 package com.example.skilltracker.entity;
 
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
-public class UserEntity extends AbstractEntity {
+public class UserEntity extends AbstractEntity implements UserDetails {
 
     @Column(nullable = false)
-    private String username;
+    private String name;
 
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
     private String email;
+
+    @Column(nullable = false)
+    private String password;
 
     public UserEntity() {
     }
 
-    public UserEntity(String username, String email) {
-        this.username = username;
+    public UserEntity(String name, String email) {
+        this.name = name;
         this.email = email;
     }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+
+    @Override
     public String getUsername() {
-        return username;
+        return name;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
