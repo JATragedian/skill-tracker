@@ -6,6 +6,7 @@ import com.example.skilltracker.dto.skillassignment.response.MultipleSkillsAssig
 import com.example.skilltracker.dto.skillassignment.response.SkillAssignmentResponse;
 import com.example.skilltracker.entity.SkillAssignmentEntity;
 import com.example.skilltracker.service.SkillAssignmentService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +18,7 @@ import java.util.List;
 @Validated
 @RestController
 @RequestMapping("/api/assignments")
+@SecurityRequirement(name = "bearerAuth")
 public class SkillAssignmentController {
 
     private final SkillAssignmentService service;

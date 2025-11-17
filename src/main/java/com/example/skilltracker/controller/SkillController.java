@@ -3,6 +3,7 @@ package com.example.skilltracker.controller;
 import com.example.skilltracker.dto.skill.request.CreateSkillRequest;
 import com.example.skilltracker.dto.skill.response.SkillResponse;
 import com.example.skilltracker.service.SkillService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import java.util.List;
 @Validated
 @RestController
 @RequestMapping("/api/skills")
+@SecurityRequirement(name = "bearerAuth")
 public class SkillController {
 
     private final SkillService service;

@@ -3,6 +3,7 @@ package com.example.skilltracker.controller;
 import com.example.skilltracker.dto.user.request.CreateUserRequest;
 import com.example.skilltracker.dto.user.response.UserResponse;
 import com.example.skilltracker.service.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import java.util.List;
 @Validated
 @RestController
 @RequestMapping("/api/users")
+@SecurityRequirement(name = "bearerAuth")
 public class UserController {
 
     private final UserService service;

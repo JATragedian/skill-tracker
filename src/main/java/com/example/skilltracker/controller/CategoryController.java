@@ -3,6 +3,7 @@ package com.example.skilltracker.controller;
 import com.example.skilltracker.dto.category.request.CreateCategoryRequest;
 import com.example.skilltracker.dto.category.response.CategoryResponse;
 import com.example.skilltracker.service.CategoryService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import java.util.List;
 @Validated
 @RestController
 @RequestMapping("/api/categories")
+@SecurityRequirement(name = "bearerAuth")
 public class CategoryController {
 
     private final CategoryService service;
