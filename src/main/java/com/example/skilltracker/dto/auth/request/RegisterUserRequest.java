@@ -1,4 +1,4 @@
-package com.example.skilltracker.dto.user.request;
+package com.example.skilltracker.dto.auth.request;
 
 import jakarta.validation.constraints.NotBlank;
 

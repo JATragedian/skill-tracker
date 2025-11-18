@@ -12,7 +12,7 @@ public class LoggingAspect {
     @Pointcut("execution(* com.example.skilltracker.service..*(..))")
     public void anyServiceMethod() {}
 
-    @Pointcut("execution(* com.example.skilltracker.service.ErrorLogCleanupService.cleanupOldLogs(..))")
+    @Pointcut("execution(* com.example.skilltracker.service.log.ErrorLogCleanupService.cleanupOldLogs(..))")
     public void errorLogCleanupMethod() {}
 
     @Before("anyServiceMethod()")

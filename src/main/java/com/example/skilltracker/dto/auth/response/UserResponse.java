@@ -1,4 +1,4 @@
-package com.example.skilltracker.dto.user.response;
+package com.example.skilltracker.dto.auth.response;
 
 public record UserResponse(
         Long id,

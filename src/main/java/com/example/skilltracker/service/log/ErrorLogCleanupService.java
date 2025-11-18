@@ -1,6 +1,6 @@
-package com.example.skilltracker.service;
+package com.example.skilltracker.service.log;
 
-import com.example.skilltracker.repository.ErrorLogRepository;
+import com.example.skilltracker.repository.log.ErrorLogRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;

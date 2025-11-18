@@ -1,6 +1,6 @@
 package com.example.skilltracker.controller;
 
-import com.example.skilltracker.dto.user.response.UserResponse;
+import com.example.skilltracker.dto.auth.response.UserResponse;
 import com.example.skilltracker.entity.user.UserEntity;
 import com.example.skilltracker.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;

@@ -8,3 +8,4 @@ app:
   jwt:
     secret: ${APP_JWT_SECRET}
     expiration-ms: 3600000   # 1 hour
+    refresh-expiration-sec: 2592000   # 30 days

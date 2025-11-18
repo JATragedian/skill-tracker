@@ -1,6 +1,6 @@
 package com.example.skilltracker.config.security;
 
-import com.example.skilltracker.service.AppUserDetailsService;
+import com.example.skilltracker.service.auth.AppUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

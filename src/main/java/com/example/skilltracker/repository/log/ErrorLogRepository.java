@@ -1,4 +1,4 @@
-package com.example.skilltracker.repository;
+package com.example.skilltracker.repository.log;
 
 import com.example.skilltracker.entity.ErrorLogEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

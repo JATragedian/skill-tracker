@@ -8,6 +8,7 @@ import com.example.skilltracker.entity.exception.EntityNotFoundException;
 import com.example.skilltracker.repository.SkillAssignmentRepository;
 import com.example.skilltracker.repository.SkillRepository;
 import com.example.skilltracker.repository.UserRepository;
+import com.example.skilltracker.service.log.ErrorLogService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 

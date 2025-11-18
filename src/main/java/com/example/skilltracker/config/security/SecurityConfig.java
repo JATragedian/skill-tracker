@@ -1,6 +1,6 @@
 package com.example.skilltracker.config.security;
 
-import com.example.skilltracker.service.AppUserDetailsService;
+import com.example.skilltracker.service.auth.AppUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

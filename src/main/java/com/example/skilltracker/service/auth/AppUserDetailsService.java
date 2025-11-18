@@ -1,4 +1,4 @@
-package com.example.skilltracker.service;
+package com.example.skilltracker.service.auth;
 
 import com.example.skilltracker.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;

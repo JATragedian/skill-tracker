@@ -1,10 +1,9 @@
 package com.example.skilltracker.service;
 
-import com.example.skilltracker.entity.exception.EntityNotFoundException;
 import com.example.skilltracker.entity.user.Role;
 import com.example.skilltracker.entity.user.UserEntity;
+import com.example.skilltracker.entity.exception.EntityNotFoundException;
 import com.example.skilltracker.repository.UserRepository;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -49,10 +48,5 @@ public class UserService {
             throw new EntityNotFoundException(UserEntity.class, id);
         }
         repository.deleteById(id);
-    }
-
-    public UserEntity findByEmail(String email) {
-        return repository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
     }
 }
