@@ -3,6 +3,7 @@ package com.example.skilltracker.config.security;
 import com.example.skilltracker.config.security.handler.AuthAccessDeniedHandler;
 import com.example.skilltracker.config.security.handler.AuthEntryPoint;
 import com.example.skilltracker.service.auth.AppUserDetailsService;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,24 +19,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @EnableMethodSecurity
 @Configuration
+@AllArgsConstructor
 public class SecurityConfig {
 
     private final AppUserDetailsService userDetailsService;
     private final JwtAuthenticationFilter jwtFilter;
     private final AuthEntryPoint authEntryPoint;
     private final AuthAccessDeniedHandler authAccessDeniedHandler;
-
-    public SecurityConfig(
-            AppUserDetailsService userDetailsService,
-            JwtAuthenticationFilter jwtFilter,
-            AuthEntryPoint authEntryPoint,
-            AuthAccessDeniedHandler authAccessDeniedHandler
-    ) {
-        this.userDetailsService = userDetailsService;
-        this.jwtFilter = jwtFilter;
-        this.authEntryPoint = authEntryPoint;
-        this.authAccessDeniedHandler = authAccessDeniedHandler;
-    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

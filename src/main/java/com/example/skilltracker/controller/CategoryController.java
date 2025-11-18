@@ -5,6 +5,7 @@ import com.example.skilltracker.dto.category.response.CategoryResponse;
 import com.example.skilltracker.mapper.CategoryMapper;
 import com.example.skilltracker.service.CategoryService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -13,16 +14,12 @@ import java.util.List;
 
 @Validated
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/categories")
 public class CategoryController {
 
     private final CategoryService service;
     private final CategoryMapper mapper;
-
-    public CategoryController(CategoryService service, CategoryMapper mapper) {
-        this.service = service;
-        this.mapper = mapper;
-    }
 
     @GetMapping
     public List<CategoryResponse> findAll() {

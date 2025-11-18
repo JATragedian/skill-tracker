@@ -1,8 +1,16 @@
 package com.example.skilltracker.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "skills")
 public class SkillEntity extends AbstractEntity {
 
@@ -15,36 +23,4 @@ public class SkillEntity extends AbstractEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private CategoryEntity category;
-
-    public SkillEntity() {
-    }
-
-    public SkillEntity(String name, int level) {
-        this.name = name;
-        this.level = level;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public int getLevel() {
-        return level;
-    }
-
-    public CategoryEntity getCategory() {
-        return category;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
-    }
-
-    public void setCategory(CategoryEntity category) {
-        this.category = category;
-    }
 }

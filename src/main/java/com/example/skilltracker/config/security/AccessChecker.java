@@ -1,16 +1,14 @@
 package com.example.skilltracker.config.security;
 
 import com.example.skilltracker.repository.SkillAssignmentRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component("ac")
+@AllArgsConstructor
 public class AccessChecker {
 
     private final SkillAssignmentRepository skillAssignmentRepository;
-
-    public AccessChecker(SkillAssignmentRepository skillAssignmentRepository) {
-        this.skillAssignmentRepository = skillAssignmentRepository;
-    }
 
     public boolean canAccessAssignment(Long id, String email) {
         return skillAssignmentRepository.findById(id)

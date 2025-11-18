@@ -10,30 +10,20 @@ import com.example.skilltracker.repository.SkillRepository;
 import com.example.skilltracker.repository.UserRepository;
 import com.example.skilltracker.service.log.ErrorLogService;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class SkillAssignmentService {
 
     private final UserRepository userRepository;
     private final SkillRepository skillRepository;
     private final SkillAssignmentRepository skillAssignmentRepository;
     private final ErrorLogService errorLogService;
-
-    public SkillAssignmentService(
-            UserRepository userRepository,
-            SkillRepository skillRepository,
-            SkillAssignmentRepository skillAssignmentRepository,
-            ErrorLogService errorLogService
-    ) {
-        this.userRepository = userRepository;
-        this.skillRepository = skillRepository;
-        this.skillAssignmentRepository = skillAssignmentRepository;
-        this.errorLogService = errorLogService;
-    }
 
     @Transactional
     public SkillAssignmentEntity assignSkillToUser(Long userId, Long skillId, int proficiency) {

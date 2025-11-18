@@ -4,6 +4,7 @@ import com.example.skilltracker.service.util.TimeService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -11,13 +12,10 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
+@AllArgsConstructor
 public class AuthEntryPoint implements AuthenticationEntryPoint {
 
     private final TimeService timeService;
-
-    public AuthEntryPoint(TimeService timeService) {
-        this.timeService = timeService;
-    }
 
     @Override
     public void commence(
@@ -33,6 +31,6 @@ public class AuthEntryPoint implements AuthenticationEntryPoint {
                 "error": "Unauthorized",
                 "timestamp": "%s"
             }
-        """.formatted(timeService.now()));
+        """.formatted(timeService.nowLocalDateTime()));
     }
 }

@@ -5,6 +5,7 @@ import com.example.skilltracker.dto.skill.response.SkillResponse;
 import com.example.skilltracker.mapper.SkillMapper;
 import com.example.skilltracker.service.SkillService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -13,16 +14,12 @@ import java.util.List;
 
 @Validated
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/skills")
 public class SkillController {
 
     private final SkillService service;
     private final SkillMapper mapper;
-
-    public SkillController(SkillService service, SkillMapper mapper) {
-        this.service = service;
-        this.mapper = mapper;
-    }
 
     @GetMapping
     @PreAuthorize("isAuthenticated()")
@@ -39,7 +36,7 @@ public class SkillController {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public SkillResponse create(@Valid @RequestBody CreateSkillRequest request) {
-        return mapper.toResponse(service.create(request.name(), request.level()));
+        return mapper.toResponse(service.create(request.name(), request.level(), request.categoryId()));
     }
 
     @DeleteMapping("/{id}")

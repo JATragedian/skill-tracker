@@ -12,6 +12,7 @@ import com.example.skilltracker.service.UserService;
 import com.example.skilltracker.service.auth.RefreshTokenService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
+import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.validation.annotation.Validated;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Validated
+@AllArgsConstructor
 @RequestMapping("/api/auth")
 public class AuthController {
 
@@ -30,20 +32,6 @@ public class AuthController {
     private final JwtService jwtService;
     private final UserService userService;
     private final UserMapper mapper;
-
-    public AuthController(
-            AuthenticationManager authenticationManager,
-            RefreshTokenService refreshTokenService,
-            JwtService jwtService,
-            UserService userService,
-            UserMapper mapper
-    ) {
-        this.authenticationManager = authenticationManager;
-        this.refreshTokenService = refreshTokenService;
-        this.jwtService = jwtService;
-        this.userService = userService;
-        this.mapper = mapper;
-    }
 
     @PostMapping("/login")
     public AuthResponse login(

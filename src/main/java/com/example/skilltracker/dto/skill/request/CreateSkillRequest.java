@@ -10,5 +10,8 @@ public record CreateSkillRequest(
 
         @Min(value = 1, message = "Skill level must be at least 1")
         @Max(value = 10, message = "Skill level cannot exceed 10")
-        int level
+        int level,
+
+        @NotBlank(message = "Category ID cannot be empty")
+        Long categoryId
 ) {}

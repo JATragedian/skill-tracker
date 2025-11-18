@@ -3,10 +3,15 @@ package com.example.skilltracker.entity.auth;
 import com.example.skilltracker.entity.AbstractEntity;
 import com.example.skilltracker.entity.user.UserEntity;
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.Instant;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "refresh_tokens")
 public class RefreshTokenEntity extends AbstractEntity {
 
@@ -19,37 +24,4 @@ public class RefreshTokenEntity extends AbstractEntity {
 
     @Column(nullable = false)
     private Instant expiresAt;
-
-    public RefreshTokenEntity() {
-    }
-
-    public RefreshTokenEntity(UserEntity user, String token, Instant expiresAt) {
-        this.user = user;
-        this.token = token;
-        this.expiresAt = expiresAt;
-    }
-
-    public UserEntity getUser() {
-        return user;
-    }
-
-    public void setUser(UserEntity user) {
-        this.user = user;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public Instant getExpiresAt() {
-        return expiresAt;
-    }
-
-    public void setExpiresAt(Instant expiresAt) {
-        this.expiresAt = expiresAt;
-    }
 }

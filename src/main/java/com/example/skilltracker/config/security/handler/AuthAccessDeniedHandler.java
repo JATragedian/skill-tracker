@@ -4,6 +4,7 @@ import com.example.skilltracker.service.util.TimeService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
@@ -11,13 +12,10 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
+@AllArgsConstructor
 public class AuthAccessDeniedHandler implements AccessDeniedHandler {
 
     private final TimeService timeService;
-
-    public AuthAccessDeniedHandler(TimeService timeService) {
-        this.timeService = timeService;
-    }
 
     @Override
     public void handle(
@@ -33,6 +31,6 @@ public class AuthAccessDeniedHandler implements AccessDeniedHandler {
                 "error": "Forbidden",
                 "timestamp": "%s"
             }
-        """.formatted(timeService.now()));
+        """.formatted(timeService.nowLocalDateTime()));
     }
 }

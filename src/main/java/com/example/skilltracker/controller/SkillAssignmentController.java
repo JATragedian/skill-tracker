@@ -7,6 +7,7 @@ import com.example.skilltracker.entity.user.Role;
 import com.example.skilltracker.entity.user.UserEntity;
 import com.example.skilltracker.mapper.SkillAssignmentMapper;
 import com.example.skilltracker.service.SkillAssignmentService;
+import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
@@ -16,16 +17,12 @@ import java.util.List;
 
 @Validated
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/assignments")
 public class SkillAssignmentController {
 
     private final SkillAssignmentService service;
     private final SkillAssignmentMapper mapper;
-
-    public SkillAssignmentController(SkillAssignmentService service, SkillAssignmentMapper mapper) {
-        this.service = service;
-        this.mapper = mapper;
-    }
 
     @GetMapping
     @PreAuthorize("isAuthenticated()")

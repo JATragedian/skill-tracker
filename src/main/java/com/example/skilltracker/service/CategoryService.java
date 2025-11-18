@@ -3,18 +3,16 @@ package com.example.skilltracker.service;
 import com.example.skilltracker.entity.CategoryEntity;
 import com.example.skilltracker.entity.exception.EntityNotFoundException;
 import com.example.skilltracker.repository.CategoryRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@AllArgsConstructor
 @Service
 public class CategoryService {
 
     private final CategoryRepository repository;
-
-    public CategoryService(CategoryRepository repository) {
-        this.repository = repository;
-    }
 
     public List<CategoryEntity> findAll() {
         return repository.findAll();

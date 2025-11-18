@@ -4,6 +4,7 @@ import com.example.skilltracker.dto.auth.response.UserResponse;
 import com.example.skilltracker.entity.user.UserEntity;
 import com.example.skilltracker.mapper.UserMapper;
 import com.example.skilltracker.service.UserService;
+import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
@@ -13,16 +14,12 @@ import java.util.List;
 
 @Validated
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/users")
 public class UserController {
 
     private final UserService service;
     private final UserMapper mapper;
-
-    public UserController(UserService service, UserMapper mapper) {
-        this.service = service;
-        this.mapper = mapper;
-    }
 
     @GetMapping("/me")
     @PreAuthorize("isAuthenticated()")

@@ -3,6 +3,8 @@ package com.example.skilltracker.service.auth;
 import com.example.skilltracker.entity.auth.RefreshTokenEntity;
 import com.example.skilltracker.entity.user.UserEntity;
 import com.example.skilltracker.repository.auth.RefreshTokenRepository;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -10,16 +12,13 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class RefreshTokenService {
 
     private final RefreshTokenRepository repository;
 
     @Value("${app.jwt.refresh-expiration-sec}")
     private long expirationSec;
-
-    public RefreshTokenService(RefreshTokenRepository repository) {
-        this.repository = repository;
-    }
 
     public RefreshTokenEntity create(UserEntity user) {
         var token = new RefreshTokenEntity(
