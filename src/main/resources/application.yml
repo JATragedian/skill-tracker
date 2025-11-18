@@ -11,3 +11,6 @@ app:
     refresh-expiration-sec: 2592000   # 30 days
   time:
     zone: America/Los_Angeles
+  db:
+    logs:
+      days-to-keep: 7

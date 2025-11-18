@@ -2,6 +2,7 @@ package com.example.skilltracker.service.log;
 
 import com.example.skilltracker.repository.log.ErrorLogRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,9 @@ public class ErrorLogCleanupService {
 
     private final ErrorLogRepository errorLogRepository;
 
+    @Value("${app.db.logs.days-to-keep}")
+    private Long daysToKeep;
+
     public ErrorLogCleanupService(ErrorLogRepository repository) {
         this.errorLogRepository = repository;
     }
@@ -21,6 +25,6 @@ public class ErrorLogCleanupService {
     @Transactional
     @Scheduled(cron = "0 0 4 * * *")
     public void cleanupOldLogs() {
-        errorLogRepository.deleteOlderThan(Instant.now().minus(7, ChronoUnit.DAYS));
+        errorLogRepository.deleteOlderThan(Instant.now().minus(daysToKeep, ChronoUnit.DAYS));
     }
 }

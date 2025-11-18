@@ -49,3 +49,7 @@ tasks.named('test') {
 tasks.withType(JavaCompile).configureEach {
     options.errorprone.enabled = !name.toLowerCase().contains("test")
 }
+
+tasks.withType(JavaCompile).configureEach {
+    options.errorprone.disableWarningsInGeneratedCode = true
+}
