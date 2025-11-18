@@ -2,6 +2,7 @@ package com.example.skilltracker.controller;
 
 import com.example.skilltracker.dto.auth.response.UserResponse;
 import com.example.skilltracker.entity.user.UserEntity;
+import com.example.skilltracker.mapper.UserMapper;
 import com.example.skilltracker.service.UserService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -16,46 +17,29 @@ import java.util.List;
 public class UserController {
 
     private final UserService service;
+    private final UserMapper mapper;
 
-    public UserController(UserService service) {
+    public UserController(UserService service, UserMapper mapper) {
         this.service = service;
+        this.mapper = mapper;
     }
 
     @GetMapping("/me")
     @PreAuthorize("isAuthenticated()")
     public UserResponse getCurrentUser(Authentication authentication) {
-        var user = ((UserEntity) authentication.getPrincipal());
-        return new UserResponse(
-                user.getId(),
-                user.getName(),
-                user.getEmail(),
-                user.getRole().name()
-        );
+        return mapper.toResponse((UserEntity) authentication.getPrincipal());
     }
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public List<UserResponse> findAll() {
-        return service.findAll().stream()
-                .map(user -> new UserResponse(
-                        user.getId(),
-                        user.getName(),
-                        user.getEmail(),
-                        user.getRole().name())
-                )
-                .toList();
+        return mapper.toResponseList(service.findAll());
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public UserResponse find(@PathVariable Long id) {
-        var user = service.findById(id);
-        return new UserResponse(
-                user.getId(),
-                user.getName(),
-                user.getEmail(),
-                user.getRole().name()
-        );
+        return mapper.toResponse(service.findById(id));
     }
 
     @DeleteMapping("/{id}")

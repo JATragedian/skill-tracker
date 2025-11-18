@@ -2,34 +2,41 @@
 -- SEED: USERS
 -- ============================
 
-INSERT INTO users (name, email, password, role) VALUES
-    ('Admin', 'admin@example.com',
+MERGE INTO users (email, name, password, role)
+KEY (email)
+VALUES
+    ('admin@example.com', 'Admin',
      '$2a$10$MxuQf3.TE4qlvdeKJ27Yz.y4wDnT74FTJJ7ub7Ilq0xNwlzJ9ehLy', 'ADMIN'),
-    ('John Doe', 'john@example.com',
+
+    ('john@example.com', 'John Doe',
      '$2a$10$MxuQf3.TE4qlvdeKJ27Yz.y4wDnT74FTJJ7ub7Ilq0xNwlzJ9ehLy', 'USER'),
-    ('Alice Wonder', 'alice@example.com',
+
+    ('alice@example.com', 'Alice Wonder',
      '$2a$10$MxuQf3.TE4qlvdeKJ27Yz.y4wDnT74FTJJ7ub7Ilq0xNwlzJ9ehLy', 'USER'),
-    ('Bob Smith', 'bob@example.com',
-     '$2a$10$MxuQf3.TE4qlvdeKJ27Yz.y4wDnT74FTJJ7ub7Ilq0xNwlzJ9ehLy', 'USER')
-ON CONFLICT DO NOTHING;
+
+    ('bob@example.com', 'Bob Smith',
+     '$2a$10$MxuQf3.TE4qlvdeKJ27Yz.y4wDnT74FTJJ7ub7Ilq0xNwlzJ9ehLy', 'USER');
 
 -- ============================
 -- SEED: CATEGORIES
 -- ============================
 
-INSERT INTO categories (name) VALUES
+MERGE INTO categories (name)
+KEY (name)
+VALUES
     ('Programming'),
     ('Soft Skills'),
     ('DevOps'),
     ('Databases'),
-    ('Machine Learning')
-ON CONFLICT DO NOTHING;
+    ('Machine Learning');
 
 -- ============================
 -- SEED: SKILLS
 -- ============================
 
-INSERT INTO skills (name, level, category_id) VALUES
+MERGE INTO skills (name, level, category_id)
+KEY (name)
+VALUES
     ('Java', 5, 1),
     ('Spring Framework', 4, 1),
     ('Kotlin', 3, 1),
@@ -43,14 +50,15 @@ INSERT INTO skills (name, level, category_id) VALUES
     ('PostgreSQL', 4, 4),
     ('Redis', 2, 4),
 
-    ('PyTorch', 1, 5)
-ON CONFLICT DO NOTHING;
+    ('PyTorch', 1, 5);
 
 -- ============================
 -- SEED: SKILL ASSIGNMENTS
 -- ============================
 
-INSERT INTO skill_assignments (user_id, skill_id, proficiency) VALUES
+MERGE INTO skill_assignments (user_id, skill_id, proficiency)
+KEY (user_id, skill_id)
+VALUES
     -- Admin
     (1, 1, 5),
     (1, 2, 4),
@@ -67,8 +75,7 @@ INSERT INTO skill_assignments (user_id, skill_id, proficiency) VALUES
 
     -- Bob
     (4, 5, 3),
-    (4, 9, 2)
-ON CONFLICT DO NOTHING;
+    (4, 9, 2);
 
 -- ============================
 -- END OF SEED

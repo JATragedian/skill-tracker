@@ -2,6 +2,7 @@ package com.example.skilltracker.controller;
 
 import com.example.skilltracker.dto.skill.request.CreateSkillRequest;
 import com.example.skilltracker.dto.skill.response.SkillResponse;
+import com.example.skilltracker.mapper.SkillMapper;
 import com.example.skilltracker.service.SkillService;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,31 +17,29 @@ import java.util.List;
 public class SkillController {
 
     private final SkillService service;
+    private final SkillMapper mapper;
 
-    public SkillController(SkillService service) {
+    public SkillController(SkillService service, SkillMapper mapper) {
         this.service = service;
+        this.mapper = mapper;
     }
 
     @GetMapping
     @PreAuthorize("isAuthenticated()")
     public List<SkillResponse> findAll() {
-        return service.findAll().stream()
-                .map(skill -> new SkillResponse(skill.getId(), skill.getName(), skill.getLevel()))
-                .toList();
+        return mapper.toResponseList(service.findAll());
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     public SkillResponse find(@PathVariable Long id) {
-        var skill = service.findById(id);
-        return new SkillResponse(skill.getId(), skill.getName(), skill.getLevel());
+        return mapper.toResponse(service.findById(id));
     }
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public SkillResponse create(@Valid @RequestBody CreateSkillRequest request) {
-        var skill = service.create(request.name(), request.level());
-        return new SkillResponse(skill.getId(), skill.getName(), skill.getLevel());
+        return mapper.toResponse(service.create(request.name(), request.level()));
     }
 
     @DeleteMapping("/{id}")

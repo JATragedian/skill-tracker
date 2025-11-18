@@ -3,12 +3,15 @@ package com.example.skilltracker.controller.auth;
 import com.example.skilltracker.config.security.JwtService;
 import com.example.skilltracker.dto.auth.request.AuthRequest;
 import com.example.skilltracker.dto.auth.request.RefreshRequest;
-import com.example.skilltracker.dto.auth.response.AuthResponse;
 import com.example.skilltracker.dto.auth.request.RegisterUserRequest;
+import com.example.skilltracker.dto.auth.response.AuthResponse;
 import com.example.skilltracker.dto.auth.response.UserResponse;
 import com.example.skilltracker.entity.user.UserEntity;
-import com.example.skilltracker.service.auth.RefreshTokenService;
+import com.example.skilltracker.mapper.UserMapper;
 import com.example.skilltracker.service.UserService;
+import com.example.skilltracker.service.auth.RefreshTokenService;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.validation.annotation.Validated;
@@ -26,21 +29,39 @@ public class AuthController {
     private final RefreshTokenService refreshTokenService;
     private final JwtService jwtService;
     private final UserService userService;
+    private final UserMapper mapper;
 
     public AuthController(
             AuthenticationManager authenticationManager,
+            RefreshTokenService refreshTokenService,
             JwtService jwtService,
             UserService userService,
-            RefreshTokenService refreshTokenService
+            UserMapper mapper
     ) {
         this.authenticationManager = authenticationManager;
+        this.refreshTokenService = refreshTokenService;
         this.jwtService = jwtService;
         this.userService = userService;
-        this.refreshTokenService = refreshTokenService;
+        this.mapper = mapper;
     }
 
     @PostMapping("/login")
-    public AuthResponse login(@RequestBody AuthRequest request) {
+    public AuthResponse login(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "username": "admin@example.com",
+                                              "password": "admin"
+                                            }
+                                            """
+                            )
+                    )
+            )
+            @RequestBody AuthRequest request
+    ) {
         var auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.username(),
@@ -70,12 +91,6 @@ public class AuthController {
 
     @PostMapping("/register")
     public UserResponse register(@RequestBody RegisterUserRequest request) {
-        var user = userService.register(request.name(), request.email(), request.password());
-        return new UserResponse(
-                user.getId(),
-                user.getName(),
-                user.getEmail(),
-                user.getRole().name()
-        );
+        return mapper.toResponse(userService.register(request.name(), request.email(), request.password()));
     }
 }

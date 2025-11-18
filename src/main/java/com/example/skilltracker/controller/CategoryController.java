@@ -2,6 +2,7 @@ package com.example.skilltracker.controller;
 
 import com.example.skilltracker.dto.category.request.CreateCategoryRequest;
 import com.example.skilltracker.dto.category.response.CategoryResponse;
+import com.example.skilltracker.mapper.CategoryMapper;
 import com.example.skilltracker.service.CategoryService;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,29 +17,27 @@ import java.util.List;
 public class CategoryController {
 
     private final CategoryService service;
+    private final CategoryMapper mapper;
 
-    public CategoryController(CategoryService service) {
+    public CategoryController(CategoryService service, CategoryMapper mapper) {
         this.service = service;
+        this.mapper = mapper;
     }
 
     @GetMapping
     public List<CategoryResponse> findAll() {
-        return service.findAll().stream()
-                .map(category -> new CategoryResponse(category.getId(), category.getName()))
-                .toList();
+        return mapper.toResponseList(service.findAll());
     }
 
     @GetMapping("/{id}")
     public CategoryResponse find(@PathVariable Long id) {
-        var category = service.findById(id);
-        return new CategoryResponse(category.getId(), category.getName());
+        return mapper.toResponse(service.findById(id));
     }
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public CategoryResponse create(@Valid @RequestBody CreateCategoryRequest request) {
-        var category = service.create(request.name());
-        return new CategoryResponse(category.getId(), category.getName());
+        return mapper.toResponse(service.create(request.name()));
     }
 
     @DeleteMapping("/{id}")

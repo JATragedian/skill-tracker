@@ -2,11 +2,10 @@ package com.example.skilltracker.controller;
 
 import com.example.skilltracker.dto.skillassignment.request.AssignMultipleSkillsRequest;
 import com.example.skilltracker.dto.skillassignment.request.CreateSkillAssignmentRequest;
-import com.example.skilltracker.dto.skillassignment.response.MultipleSkillsAssignmentResponse;
 import com.example.skilltracker.dto.skillassignment.response.SkillAssignmentResponse;
-import com.example.skilltracker.entity.SkillAssignmentEntity;
 import com.example.skilltracker.entity.user.Role;
 import com.example.skilltracker.entity.user.UserEntity;
+import com.example.skilltracker.mapper.SkillAssignmentMapper;
 import com.example.skilltracker.service.SkillAssignmentService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -21,44 +20,27 @@ import java.util.List;
 public class SkillAssignmentController {
 
     private final SkillAssignmentService service;
+    private final SkillAssignmentMapper mapper;
 
-    public SkillAssignmentController(SkillAssignmentService service) {
+    public SkillAssignmentController(SkillAssignmentService service, SkillAssignmentMapper mapper) {
         this.service = service;
+        this.mapper = mapper;
     }
 
     @GetMapping
     @PreAuthorize("isAuthenticated()")
-    public MultipleSkillsAssignmentResponse getMyAssignments(Authentication authentication) {
+    public List<SkillAssignmentResponse> getMyAssignments(Authentication authentication) {
         var currentUser = (UserEntity) authentication.getPrincipal();
 
-        List<SkillAssignmentEntity> list =
-                currentUser.getRole() == Role.ADMIN
+        return mapper.toResponseList(currentUser.getRole() == Role.ADMIN
                         ? service.findAll()
-                        : service.findByUserId(currentUser.getId());
-
-        return new MultipleSkillsAssignmentResponse(
-                list.stream()
-                        .map(a -> new SkillAssignmentResponse(
-                                a.getId(),
-                                a.getUser().getId(),
-                                a.getSkill().getId(),
-                                a.getProficiency()
-                        ))
-                        .toList()
-        );
+                        : service.findByUserId(currentUser.getId()));
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or @ac.canAccessAssignment(#id, authentication.name)")
     public SkillAssignmentResponse getById(@PathVariable Long id) {
-        var skillAssignmentEntity = service.findById(id);
-
-        return new SkillAssignmentResponse(
-                skillAssignmentEntity.getId(),
-                skillAssignmentEntity.getUser().getId(),
-                skillAssignmentEntity.getSkill().getId(),
-                skillAssignmentEntity.getProficiency()
-        );
+        return mapper.toResponse(service.findById(id));
     }
 
     @PostMapping
@@ -70,40 +52,19 @@ public class SkillAssignmentController {
         var currentUser = (UserEntity) authentication.getPrincipal();
         var userId = currentUser.getRole() == Role.ADMIN ? request.userId() : currentUser.getId();
 
-        SkillAssignmentEntity assignment =
-                service.assignSkillToUser(userId, request.skillId(), request.proficiency());
-
-        return new SkillAssignmentResponse(
-                assignment.getId(),
-                assignment.getUser().getId(),
-                assignment.getSkill().getId(),
-                assignment.getProficiency()
-        );
+        return mapper.toResponse(service.assignSkillToUser(userId, request.skillId(), request.proficiency()));
     }
 
     @PostMapping("/multiple")
     @PreAuthorize("isAuthenticated()")
-    public MultipleSkillsAssignmentResponse assignMultiple(
+    public List<SkillAssignmentResponse> assignMultiple(
             @RequestBody AssignMultipleSkillsRequest request,
             Authentication authentication
     ) {
         var currentUser = (UserEntity) authentication.getPrincipal();
         var userId = currentUser.getRole() == Role.ADMIN ? request.userId() : currentUser.getId();
 
-        List<SkillAssignmentResponse> responseList = service.assignMultiple(
-                        userId,
-                        request.skillIds(),
-                        request.proficiency()
-                ).stream()
-                .map(entity -> new SkillAssignmentResponse(
-                        entity.getId(),
-                        entity.getUser().getId(),
-                        entity.getSkill().getId(),
-                        entity.getProficiency())
-                )
-                .toList();
-
-        return new MultipleSkillsAssignmentResponse(responseList);
+        return mapper.toResponseList(service.assignMultiple(userId, request.skillIds(), request.proficiency()));
     }
 
     @PutMapping("/{id}")
@@ -112,14 +73,7 @@ public class SkillAssignmentController {
             @PathVariable Long id,
             @RequestBody CreateSkillAssignmentRequest request
     ) {
-        var updated = service.update(id, request.userId(), request.skillId(), request.proficiency());
-
-        return new SkillAssignmentResponse(
-                updated.getId(),
-                updated.getUser().getId(),
-                updated.getSkill().getId(),
-                updated.getProficiency()
-        );
+        return mapper.toResponse(service.update(id, request.userId(), request.skillId(), request.proficiency()));
     }
 
     @DeleteMapping("/{id}")
