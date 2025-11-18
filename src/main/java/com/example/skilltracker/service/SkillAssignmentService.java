@@ -2,9 +2,9 @@ package com.example.skilltracker.service;
 
 import com.example.skilltracker.entity.SkillAssignmentEntity;
 import com.example.skilltracker.entity.SkillEntity;
-import com.example.skilltracker.entity.user.UserEntity;
 import com.example.skilltracker.entity.exception.DuplicateEntityException;
 import com.example.skilltracker.entity.exception.EntityNotFoundException;
+import com.example.skilltracker.entity.user.UserEntity;
 import com.example.skilltracker.repository.SkillAssignmentRepository;
 import com.example.skilltracker.repository.SkillRepository;
 import com.example.skilltracker.repository.UserRepository;
@@ -65,5 +65,38 @@ public class SkillAssignmentService {
         }
 
         return skillAssignmentEntityList;
+    }
+
+    public List<SkillAssignmentEntity> findAll() {
+        return skillAssignmentRepository.findAll();
+    }
+
+    public List<SkillAssignmentEntity> findByUserId(Long id) {
+        return skillAssignmentRepository.findByUserId(id);
+    }
+
+    public SkillAssignmentEntity findById(Long id) {
+        return skillAssignmentRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(SkillAssignmentEntity.class, id));
+    }
+
+    public SkillAssignmentEntity update(Long id, Long userId, Long skillId, int proficiency) {
+        var assignment = skillAssignmentRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(SkillAssignmentEntity.class, id));
+
+        var skill = skillRepository.findById(skillId)
+                .orElseThrow(() -> new EntityNotFoundException(SkillEntity.class, skillId));
+
+        assignment.setSkill(skill);
+        assignment.setProficiency(proficiency);
+
+        return skillAssignmentRepository.save(assignment);
+    }
+
+    public void delete(Long id) {
+        if (!skillAssignmentRepository.existsById(id)) {
+            throw new EntityNotFoundException(SkillAssignmentEntity.class, id);
+        }
+        skillAssignmentRepository.deleteById(id);
     }
 }

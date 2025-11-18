@@ -7,7 +7,6 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 public record AssignMultipleSkillsRequest(
-        @NotNull
         Long userId,
         List<Long> skillIds,
         @Min(value = 1, message = "Proficiency must be at least 1")

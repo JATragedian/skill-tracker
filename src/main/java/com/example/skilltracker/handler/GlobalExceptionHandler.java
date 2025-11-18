@@ -2,8 +2,10 @@ package com.example.skilltracker.handler;
 
 import com.example.skilltracker.entity.exception.DuplicateEntityException;
 import com.example.skilltracker.entity.exception.EntityNotFoundException;
+import com.example.skilltracker.service.util.TimeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -14,13 +16,19 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    private final TimeService timeService;
+
+    public GlobalExceptionHandler(TimeService timeService) {
+        this.timeService = timeService;
+    }
+
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleSkillNotFound(EntityNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Map.of(
                         "error", ex.getMessage(),
                         "id", ex.getId(),
-                        "timestamp", LocalDateTime.now(ZoneId.of("America/Los_Angeles"))
+                        "timestamp", timeService.now()
                 ));
     }
 
@@ -29,7 +37,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(Map.of(
                         "error", ex.getMessage(),
-                        "timestamp", LocalDateTime.now(ZoneId.of("America/Los_Angeles"))
+                        "timestamp", timeService.now()
+                ));
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<Map<String, Object>> handleAccessDenied(AuthorizationDeniedException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(Map.of(
+                        "error", ex.getMessage(),
+                        "timestamp", timeService.now()
                 ));
     }
 
@@ -38,7 +55,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of(
                         "message", ex.getMessage(),
-                        "timestamp", LocalDateTime.now(ZoneId.of("America/Los_Angeles"))
+                        "timestamp", timeService.now()
                 ));
     }
 }

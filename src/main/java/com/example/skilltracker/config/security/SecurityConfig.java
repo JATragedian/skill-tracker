@@ -1,11 +1,14 @@
 package com.example.skilltracker.config.security;
 
+import com.example.skilltracker.config.security.handler.AuthAccessDeniedHandler;
+import com.example.skilltracker.config.security.handler.AuthEntryPoint;
 import com.example.skilltracker.service.auth.AppUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -13,15 +16,25 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+@EnableMethodSecurity
 @Configuration
 public class SecurityConfig {
 
     private final AppUserDetailsService userDetailsService;
     private final JwtAuthenticationFilter jwtFilter;
+    private final AuthEntryPoint authEntryPoint;
+    private final AuthAccessDeniedHandler authAccessDeniedHandler;
 
-    public SecurityConfig(AppUserDetailsService userDetailsService, JwtAuthenticationFilter jwtFilter) {
+    public SecurityConfig(
+            AppUserDetailsService userDetailsService,
+            JwtAuthenticationFilter jwtFilter,
+            AuthEntryPoint authEntryPoint,
+            AuthAccessDeniedHandler authAccessDeniedHandler
+    ) {
         this.userDetailsService = userDetailsService;
         this.jwtFilter = jwtFilter;
+        this.authEntryPoint = authEntryPoint;
+        this.authAccessDeniedHandler = authAccessDeniedHandler;
     }
 
     @Bean
@@ -38,10 +51,14 @@ public class SecurityConfig {
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-                .sessionManagement(session -> session.disable())
+                .sessionManagement(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(authEntryPoint)
+                        .accessDeniedHandler(authAccessDeniedHandler)
+                );
 
         return http.build();
     }
