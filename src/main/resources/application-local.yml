@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:skilltracker
+    url: jdbc:h2:mem:skilltracker;MODE=PostgreSQL;DATABASE_TO_UPPER=false;
     driver-class-name: org.h2.Driver
     username: sa
     password: ''
@@ -11,4 +11,4 @@ spring:
   flyway:
     locations:
       - classpath:db/migration
-      - classpath:db/migration/dev
+      - classpath:db/data-common
