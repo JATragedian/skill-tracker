@@ -1,1 +1,3 @@
 rootProject.name = 'skilltracker'
+include 'skilltracker-app'
+include 'skilltracker-webflux'
