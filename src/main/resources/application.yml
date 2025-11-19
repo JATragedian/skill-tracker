@@ -3,6 +3,9 @@ spring:
     default: local
   config:
     import: optional:file:.env[.properties]
+  cache:
+    caffeine:
+      spec: maximumSize=5000,expireAfterWrite=10m,expireAfterAccess=30m
 
 app:
   jwt:

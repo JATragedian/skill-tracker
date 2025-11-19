@@ -9,9 +9,11 @@ import com.example.skilltracker.repository.SkillAssignmentRepository;
 import com.example.skilltracker.repository.SkillRepository;
 import com.example.skilltracker.repository.UserRepository;
 import com.example.skilltracker.service.log.ErrorLogService;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +27,26 @@ public class SkillAssignmentService {
     private final SkillAssignmentRepository skillAssignmentRepository;
     private final ErrorLogService errorLogService;
 
+    @Cacheable("skillAssignments")
+    @Transactional(readOnly = true)
+    public List<SkillAssignmentEntity> findAll() {
+        return skillAssignmentRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public List<SkillAssignmentEntity> findByUserId(Long id) {
+        return skillAssignmentRepository.findByUserId(id);
+    }
+
+    @Cacheable(value = "assignmentById", key = "#id")
+    @Transactional(readOnly = true)
+    public SkillAssignmentEntity findById(Long id) {
+        return skillAssignmentRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(SkillAssignmentEntity.class, id));
+    }
+
     @Transactional
+    @CacheEvict(value = {"skillAssignments", "assignmentById"}, allEntries = true)
     public SkillAssignmentEntity assignSkillToUser(Long userId, Long skillId, int proficiency) {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(UserEntity.class, userId));
@@ -43,6 +64,7 @@ public class SkillAssignmentService {
     }
 
     @Transactional
+    @CacheEvict(value = {"skillAssignments", "assignmentById"}, allEntries = true)
     public List<SkillAssignmentEntity> assignMultiple(Long userId, List<Long> skillIds, int proficiency) {
         List<SkillAssignmentEntity> skillAssignmentEntityList = new ArrayList<>();
         for (Long skillId : skillIds) {
@@ -57,19 +79,7 @@ public class SkillAssignmentService {
         return skillAssignmentEntityList;
     }
 
-    public List<SkillAssignmentEntity> findAll() {
-        return skillAssignmentRepository.findAll();
-    }
-
-    public List<SkillAssignmentEntity> findByUserId(Long id) {
-        return skillAssignmentRepository.findByUserId(id);
-    }
-
-    public SkillAssignmentEntity findById(Long id) {
-        return skillAssignmentRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(SkillAssignmentEntity.class, id));
-    }
-
+    @CacheEvict(value = {"skillAssignments", "assignmentById"}, allEntries = true)
     public SkillAssignmentEntity update(Long id, Long userId, Long skillId, int proficiency) {
         var assignment = skillAssignmentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(SkillAssignmentEntity.class, id));
@@ -83,6 +93,7 @@ public class SkillAssignmentService {
         return skillAssignmentRepository.save(assignment);
     }
 
+    @CacheEvict(value = {"skillAssignments", "assignmentById"}, allEntries = true)
     public void delete(Long id) {
         if (!skillAssignmentRepository.existsById(id)) {
             throw new EntityNotFoundException(SkillAssignmentEntity.class, id);
