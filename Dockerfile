@@ -10,6 +10,8 @@ COPY gradle ./gradle
 COPY settings.gradle .
 COPY build.gradle .
 
+RUN chmod +x gradlew
+
 COPY skilltracker-app ./skilltracker-app
 COPY skilltracker-webflux ./skilltracker-webflux
 
