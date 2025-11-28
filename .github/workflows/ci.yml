@@ -1,5 +1,10 @@
 name: CI
 
+# ------------------------------------------------------------
+# Workflow triggers:
+# - Runs on every push to the "main" branch
+# - Runs for any pull request targeting "main"
+# ------------------------------------------------------------
 on:
   push:
     branches: [ "main" ]
@@ -7,13 +12,24 @@ on:
     branches: [ "main" ]
 
 jobs:
+
+  # ============================================================
+  # JOB 1: BUILD AND TEST (Gradle multi-module project)
+  # ============================================================
   build-and-test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest   # GitHub-hosted Linux runner
 
     steps:
+      # --------------------------------------------
+      # 1. Checkout repository code
+      # --------------------------------------------
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # --------------------------------------------
+      # 2. Configure Java 21 with Gradle caching
+      # Speeds up dependency resolution significantly
+      # --------------------------------------------
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
@@ -21,48 +37,106 @@ jobs:
           java-version: '21'
           cache: 'gradle'
 
+      # --------------------------------------------
+      # 3. Allow gradlew to be executed
+      # (Linux runners require explicit chmod +x)
+      # --------------------------------------------
       - name: Grant execute permission for Gradle Wrapper
         run: chmod +x gradlew
 
+      # --------------------------------------------
+      # 4. Build entire multi-module project
+      # This command:
+      # - compiles all modules
+      # - runs unit tests
+      # - runs integration tests
+      # --------------------------------------------
       - name: Build & Test All Modules
         run: ./gradlew build --no-daemon
 
-      - name: Upload Test Reports
+      # --------------------------------------------
+      # 5. Upload test reports if something fails
+      # Helps debugging test failures directly from CI
+      # --------------------------------------------
+      - name: Upload Test Reports if failed
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: test-reports
           path: '**/build/reports/tests/test'
 
+
+  # ============================================================
+  # JOB 2: DOCKER IMAGE BUILD (depends on successful build/test)
+  # ============================================================
   docker-build:
-    needs: build-and-test
+    needs: build-and-test     # run only if previous job succeeded
     runs-on: ubuntu-latest
 
     steps:
+      # --------------------------------------------
+      # 1. Checkout repository again
+      # Each job runs in a fresh environment
+      # --------------------------------------------
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # --------------------------------------------
+      # 2. Enable Docker Buildx
+      # Required for advanced Docker builds & caching
+      # --------------------------------------------
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Login to DockerHub
-        if: secrets.DOCKERHUB_USERNAME != ''
+      # ------------------------------------------------------------
+      # OPTIONAL: Login to DockerHub if credentials are provided
+      # Secrets:
+      # - DOCKERHUB_USERNAME
+      # - DOCKERHUB_TOKEN
+      #
+      # If secrets are not provided, DockerHub steps are skipped.
+      # ------------------------------------------------------------
+      - name: Login to DockerHub (if secrets exist)
+        if: ${{ secrets.DOCKERHUB_USERNAME && secrets.DOCKERHUB_TOKEN }}
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build Docker Image
+      # ------------------------------------------------------------
+      # Build & push Docker image to DockerHub
+      # Only executed when DockerHub credentials exist
+      # ------------------------------------------------------------
+      - name: Build and Push Docker Image (if secrets exist)
+        if: ${{ secrets.DOCKERHUB_USERNAME && secrets.DOCKERHUB_TOKEN }}
         uses: docker/build-push-action@v5
         with:
           context: .
-          push: ${{ secrets.DOCKERHUB_USERNAME != '' }}
+          push: true
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/skilltracker:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/skilltracker:${{ github.sha }}
 
-      - name: Export Docker Image as Artifact (if not pushing)
-        if: secrets.DOCKERHUB_USERNAME == ''
+      # ------------------------------------------------------------
+      # If secrets DO NOT exist:
+      # - Build Docker image locally inside CI
+      # - Export it to a .tar archive (portable image)
+      #
+      # This allows downloading and running the image manually.
+      # ------------------------------------------------------------
+      - name: Build Docker Image (local export)
+        if: ${{ !secrets.DOCKERHUB_USERNAME || !secrets.DOCKERHUB_TOKEN }}
         run: |
-          docker save ${{ secrets.DOCKERHUB_USERNAME }}/skilltracker:latest -o skilltracker.tar
-        shell: bash
+          docker build -t skilltracker:latest .
+          docker save skilltracker:latest -o skilltracker.tar
+
+      # ------------------------------------------------------------
+      # Upload the Docker image as a build artifact
+      # This step only runs if we did NOT push to DockerHub
+      # ------------------------------------------------------------
+      - name: Upload Docker Image Artifact (if not pushed)
+        if: ${{ !secrets.DOCKERHUB_USERNAME || !secrets.DOCKERHUB_TOKEN }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: skilltracker-docker-image
+          path: skilltracker.tar
