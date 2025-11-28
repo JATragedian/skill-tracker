@@ -13,6 +13,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -79,5 +81,76 @@ class SkillServiceTest {
                 () -> assertEquals(categoryId, exception.getId(), "Category ID must be the same"),
                 () -> verify(skillRepository, never()).save(any())
         );
+    }
+
+    @Test
+    void findAll_should_return_all_skills() {
+
+        // Given
+        var skills = List.of(new SkillEntity(), new SkillEntity());
+        when(skillRepository.findAll()).thenReturn(skills);
+
+        // When
+        var result = skillService.findAll();
+
+        // Then
+        assertSame(skills, result, "All skills should be returned");
+    }
+
+    @Test
+    void findById_should_return_skill_when_exists() {
+
+        // Given
+        Long id = 7L;
+        SkillEntity skill = new SkillEntity();
+        when(skillRepository.findById(id)).thenReturn(java.util.Optional.of(skill));
+
+        // When
+        SkillEntity result = skillService.findById(id);
+
+        // Then
+        assertSame(skill, result, "Skill should be returned when present");
+    }
+
+    @Test
+    void findById_should_throw_when_missing() {
+
+        // Given
+        Long id = 12L;
+        when(skillRepository.findById(id)).thenReturn(java.util.Optional.empty());
+
+        // When
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> skillService.findById(id));
+
+        // Then
+        assertEquals(id, exception.getId(), "Exception should include requested id");
+    }
+
+    @Test
+    void delete_should_remove_existing_skill() {
+
+        // Given
+        Long id = 3L;
+        when(skillRepository.existsById(id)).thenReturn(true);
+
+        // When
+        skillService.delete(id);
+
+        // Then
+        verify(skillRepository).deleteById(id);
+    }
+
+    @Test
+    void delete_should_throw_when_skill_missing() {
+
+        // Given
+        Long id = 15L;
+        when(skillRepository.existsById(id)).thenReturn(false);
+
+        // When
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> skillService.delete(id));
+
+        // Then
+        assertEquals(id, exception.getId(), "Exception should reference requested id");
     }
 }
