@@ -45,6 +45,8 @@ dependencies {
     errorprone 'com.google.errorprone:error_prone_core:2.29.2'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'com.h2database:h2:2.2.220'
 }
 
 tasks.named('test') {
